@@ -1,30 +1,46 @@
+"use strict";
 export default class vNode {
     tag: string = "div";
-    text: string;
-    elm: Node | void;
-    children: vNode[];
-    parent: vNode | void;
+    props: { [key: string]: string };
+    children: Array<string | vNode>;
+    parent: vNode;
 
     constructor(
         tag?: string,
-        text?: string,
-        elm?: Node,
-        children?: vNode[],
-        parent?: vNode
+        props?: { [key: string]: string },
+        children?: Array<string | vNode>,
     ) {
         this.tag = tag;
-        this.text = text;
-        this.elm = elm;
+        this.props = props;
         this.children = children;
-        this.parent = parent;
+    }
+
+    render(): HTMLElement {
+        const elm: HTMLElement = document.createElement(this.tag);
+        const props = this.props;
+
+        for (const propKey in props) {
+            elm.setAttribute(propKey, props[propKey]);
+        }
+
+        this.children.forEach(child => {
+            const node: HTMLElement | Text = (child instanceof vNode) ? child.render() : document.createTextNode(String(child));
+            elm.appendChild(node);
+        });
+
+        return elm;
     }
 }
 
-export const createDefalutNode = (text: string = "") => {
-    const node = new vNode('div', text);
+export const createNode = (
+    tag: string,
+    props: { [key: string]: string } = {},
+    children: Array<string | vNode> = [],
+) => {
+    const node = new vNode(tag, props, children);
     return node;
 }
 
-export const createNode = (tag: string, text: string = "") => {
-
+export const createEmptyNode = () =>{
+    return createNode('div');
 }
