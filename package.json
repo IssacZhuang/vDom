@@ -1,0 +1,34 @@
+{
+  "name": "vdom",
+  "version": "0.0.9",
+  "description": "Virtual Dom",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build":"webpack --mode production --config webpack.config.js",
+    "dev":"webpack --mode development --config webpack.config.js",
+    "serve":"npx webpack-dev-server --mode development --content-base ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IssacZhuang/vDom.git"
+  },
+  "keywords": [
+    "vDom",
+    "typescript"
+  ],
+  "author": "IssacZhuang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IssacZhuang/vDom/issues"
+  },
+  "homepage": "https://github.com/IssacZhuang/vDom#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  }
+}
