@@ -6,7 +6,7 @@ export default class vDom {
 
     constructor(id: string) {
         this.el = document.getElementById(id) as HTMLElement;
-        this.root = createNode('div', { id: id });
+        this.root = createNode('div', { id: id});
     }
 
     public render(nodes: Array<string | vNode>) {

@@ -1,13 +1,17 @@
 "use strict";
+
+type callback = () => void
+type propstype = { [key: string]: string | callback }
+
 export default class vNode {
     tag: string = "div";
-    props: { [key: string]: string };
+    props: propstype;
     children: Array<string | vNode>;
     parent: vNode;
 
     constructor(
         tag?: string,
-        props?: { [key: string]: string },
+        props?: propstype,
         children?: Array<string | vNode>,
     ) {
         this.tag = tag;
@@ -20,7 +24,16 @@ export default class vNode {
         const props = this.props;
 
         for (const propKey in props) {
-            elm.setAttribute(propKey, props[propKey]);
+            if (typeof props[propKey] == typeof '') {
+                elm.setAttribute(propKey, props[propKey] as string);
+                continue;
+            }
+
+            switch (propKey) {
+                case 'onclick':
+                    elm.onclick = props[propKey] as callback;
+                    break;
+            }
         }
 
         this.children.forEach(child => {
@@ -34,13 +47,13 @@ export default class vNode {
 
 export const createNode = (
     tag: string,
-    props: { [key: string]: string } = {},
+    props: propstype = {},
     children: Array<string | vNode> = [],
 ) => {
     const node = new vNode(tag, props, children);
     return node;
 }
 
-export const createEmptyNode = () =>{
+export const createEmptyNode = () => {
     return createNode('div');
 }
