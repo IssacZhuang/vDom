@@ -1,19 +1,23 @@
-import vNode, { createNode } from './vnode'
+import vNode, { createNode, cloneNode } from './vnode'
 
 export default class vDom {
-    el: HTMLElement;
-    root: vNode;
+    elm: HTMLElement;
+    tree: vNode;
+    oldTree:vNode;
 
     constructor(id: string) {
-        this.el = document.getElementById(id) as HTMLElement;
-        this.root = createNode('div', { id: id});
+        this.elm = document.getElementById(id) as HTMLElement;
+        this.tree = createNode('div', { id: id});
     }
 
     public render(nodes: Array<string | vNode>) {
-        this.root.children = nodes;
-        const result = this.root.render();
+        this.tree.children = nodes;
+        this.oldTree=cloneNode(this.tree);
 
-        this.el.replaceWith(result);
+        const result = this.tree.render();
+
+        this.elm.replaceWith(result);
+        this.elm = result;
     }
 
     public update() {

@@ -1,18 +1,19 @@
 "use strict";
+import { isFunction, isString } from "util";
 
-type callback = () => void
+type callback = (event?: Event) => void
 type propstype = { [key: string]: string | callback }
+type node = string | vNode;
 
 export default class vNode {
     tag: string = "div";
     props: propstype;
-    children: Array<string | vNode>;
-    parent: vNode;
+    children: Array<node>;
 
     constructor(
         tag?: string,
         props?: propstype,
-        children?: Array<string | vNode>,
+        children?: Array<node>,
     ) {
         this.tag = tag;
         this.props = props;
@@ -24,15 +25,13 @@ export default class vNode {
         const props = this.props;
 
         for (const propKey in props) {
-            if (typeof props[propKey] == typeof '') {
+            if (isString(props[propKey])) {
                 elm.setAttribute(propKey, props[propKey] as string);
                 continue;
             }
 
-            switch (propKey) {
-                case 'onclick':
-                    elm.onclick = props[propKey] as callback;
-                    break;
+            if (isFunction(props[propKey])) {
+                elm.addEventListener(propKey, props[propKey] as callback);
             }
         }
 
@@ -48,12 +47,26 @@ export default class vNode {
 export const createNode = (
     tag: string,
     props: propstype = {},
-    children: Array<string | vNode> = [],
-) => {
+    children: Array<node> = [],
+): vNode => {
     const node = new vNode(tag, props, children);
     return node;
 }
 
-export const createEmptyNode = () => {
+export const createEmptyNode = (): vNode => {
     return createNode('div');
+}
+
+export const cloneNode = (source: vNode):vNode => {
+    let newNode: vNode = new vNode(source.tag, source.props,[]);
+
+    source.children.forEach(child=>{
+        if (isString(child)) {
+            newNode.children=newNode.children.concat(child);
+        }else{
+            newNode.children=newNode.children.concat(cloneNode(child));
+        }
+    })
+
+    return newNode;
 }
