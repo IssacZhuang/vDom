@@ -1,7 +1,7 @@
 "use strict";
 import { isFunction, isString } from "util";
 
-type callback = (event?: Event) => void
+type callback = (node?: vNode, event?: Event) => void
 type propstype = { [key: string]: string | callback }
 type node = string | vNode;
 
@@ -31,7 +31,12 @@ export default class vNode {
             }
 
             if (isFunction(props[propKey])) {
-                elm.addEventListener(propKey, props[propKey] as callback);
+                const eventCallback = (event: Event):void => {
+                    const cb = props[propKey] as callback;
+                    cb(this, event);
+                }
+
+                elm.addEventListener(propKey, eventCallback);
             }
         }
 
@@ -57,14 +62,14 @@ export const createEmptyNode = (): vNode => {
     return createNode('div');
 }
 
-export const cloneNode = (source: vNode):vNode => {
-    let newNode: vNode = new vNode(source.tag, source.props,[]);
+export const cloneNode = (source: vNode): vNode => {
+    let newNode: vNode = new vNode(source.tag, source.props, []);
 
-    source.children.forEach(child=>{
+    source.children.forEach(child => {
         if (isString(child)) {
-            newNode.children=newNode.children.concat(child);
-        }else{
-            newNode.children=newNode.children.concat(cloneNode(child));
+            newNode.children = newNode.children.concat(child);
+        } else {
+            newNode.children = newNode.children.concat(cloneNode(child));
         }
     })
 
