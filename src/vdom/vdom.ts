@@ -1,18 +1,20 @@
 import vNode, { createNode, cloneNode } from './vnode'
 
+type method = () => void;
+
 export default class vDom {
     elm: HTMLElement;
     tree: vNode;
-    oldTree:vNode;
+    oldTree: vNode;//只用于vDom比对，不用于Dom操作
 
     constructor(id: string) {
         this.elm = document.getElementById(id) as HTMLElement;
-        this.tree = createNode('div', { id: id});
+        this.tree = createNode('div', { id: id });
     }
 
     public render(nodes: Array<string | vNode>) {
         this.tree.children = nodes;
-        this.oldTree=cloneNode(this.tree);
+        this.oldTree = cloneNode(this.tree);
 
         const result = this.tree.render();
 
@@ -22,6 +24,10 @@ export default class vDom {
 
     public update() {
 
+    }
+
+    patch(oldTree: vNode, newTree: vNode) {
+        newTree.patch(oldTree);
     }
 }
 
